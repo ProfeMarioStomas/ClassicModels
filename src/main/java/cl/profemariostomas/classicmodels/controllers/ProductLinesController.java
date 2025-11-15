@@ -37,4 +37,45 @@ public class ProductLinesController {
             return new ControllerResponse(false, "Error when saving: " + e.getMessage());
         }
     }
+    
+    public static ControllerResponse update(ProductLinesModel plm) {
+        String SQL_UPDATE = "UPDATE `productlines` SET `textDescription` = ?, `htmlDescription` = ?, `image` = ? WHERE `productLine` = ?;";
+        
+        try (Connection conn = MySQLConnection.getConnection();
+            PreparedStatement pstmt = conn.prepareStatement(SQL_UPDATE)) {
+            
+            pstmt.setString(1, plm.getTextDescription());
+            pstmt.setString(2, plm.getHtmlDescription());
+            pstmt.setString(3, plm.getImage());
+            pstmt.setString(4, plm.getProductLine());
+            
+            int rowCount = pstmt.executeUpdate();
+            
+            if (rowCount > 0) {
+                return new ControllerResponse(true, "ProductLine: " + plm.getProductLine() + " updated!");
+            }
+            return new ControllerResponse(false, "wat ¿?");
+        } catch (SQLException e) {
+            return new ControllerResponse(false, "Error when updating: " + e.getMessage());
+        }
+    }
+    
+    public static ControllerResponse delete(ProductLinesModel plm) {
+        String SQL_DELETE = "DELETE FROM `productlines` WHERE `productLine` = ?;";
+        
+        try (Connection conn = MySQLConnection.getConnection();
+            PreparedStatement pstmt = conn.prepareStatement(SQL_DELETE)) {
+            
+            pstmt.setString(1, plm.getProductLine());
+            
+            int rowCount = pstmt.executeUpdate();
+            
+            if (rowCount > 0) {
+                return new ControllerResponse(true, "ProductLine: " + plm.getProductLine() + " deleted!");
+            }
+            return new ControllerResponse(false, "wat ¿?");
+        } catch (SQLException e) {
+            return new ControllerResponse(false, "Error when deleting: " + e.getMessage());
+        }
+    }
 }
