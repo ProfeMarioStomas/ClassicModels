@@ -9,7 +9,9 @@ import cl.profemariostomas.classicmodels.MySQLConnection;
 import cl.profemariostomas.classicmodels.models.ProductLinesModel;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 
 /**
  *
@@ -76,6 +78,33 @@ public class ProductLinesController {
             return new ControllerResponse(false, "wat ¿?");
         } catch (SQLException e) {
             return new ControllerResponse(false, "Error when deleting: " + e.getMessage());
+        }
+    }
+    
+    public static ArrayList<ProductLinesModel> select() {
+        String SQL_SELECT = "SELECT * FROM `productlines`;";
+        ArrayList<ProductLinesModel> lines = new ArrayList<>();
+                
+        try (Connection conn = MySQLConnection.getConnection();
+            PreparedStatement pstmt = conn.prepareStatement(SQL_SELECT)) {
+            
+            ResultSet records = pstmt.executeQuery();
+            
+            while(records.next()) {
+                lines.add(
+                    new ProductLinesModel(
+                        records.getString("productLine"),
+                        records.getString("textDescription"),
+                        records.getString("htmlDescription"),
+                        records.getString("image")
+                    )
+                );
+            }
+            
+            return lines;
+        } catch (SQLException e) {
+            System.out.println("Cant get data: " + e.getMessage());
+            return null;
         }
     }
 }
