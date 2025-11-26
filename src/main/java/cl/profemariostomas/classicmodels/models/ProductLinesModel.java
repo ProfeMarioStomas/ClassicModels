@@ -53,4 +53,9 @@ public class ProductLinesModel {
     public void setImage(String image) {
         this.image = image;
     }
+    
+    @Override
+    public String toString() {
+        return this.productLine;
+    }
 }
